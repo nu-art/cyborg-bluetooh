@@ -44,43 +44,40 @@ import com.nu.art.cyborg.bluetooth.interfaces.OnIncomingPacketListener;
 
 import java.util.HashMap;
 
-public abstract class BluetoothModel<DeviceType extends CyborgBT_Device<PacketType>, PacketType extends BluetoothPacket>
+public abstract class BluetoothModel
 		extends Logger {
 
-	private BT_DeviceListener<DeviceType>[] deviceStateChangedListeners = new BT_DeviceListener[0];
+	private BT_DeviceListener[] deviceStateChangedListeners = new BT_DeviceListener[0];
 
-	private OnIncomingPacketListener<DeviceType, PacketType>[] packetListeners = new OnIncomingPacketListener[0];
+	private OnIncomingPacketListener[] packetListeners = new OnIncomingPacketListener[0];
 
-	private HashMap<String, DeviceType> devicesFound = new HashMap<String, DeviceType>();
+	private HashMap<String, CyborgBT_Device> devicesFound = new HashMap<>();
 
-	private final Class<DeviceType> deviceType;
-
-	protected BluetoothModel(Class<DeviceType> deviceType) {
+	protected BluetoothModel() {
 		super();
-		this.deviceType = deviceType;
 	}
 
-	public final void addOnIncomingPacketListener(OnIncomingPacketListener<DeviceType, PacketType> incomingPacketListener) {
+	public final void addOnIncomingPacketListener(OnIncomingPacketListener incomingPacketListener) {
 		packetListeners = ArrayTools.appendElement(packetListeners, incomingPacketListener);
 	}
 
-	public final void removeOnIncomingPacketListener(OnIncomingPacketListener<DeviceType, PacketType> incomingPacketListener) {
+	public final void removeOnIncomingPacketListener(OnIncomingPacketListener incomingPacketListener) {
 		packetListeners = ArrayTools.removeElement(packetListeners, incomingPacketListener);
 	}
 
-	public final void addDeviceStateChangedListener(BT_DeviceListener<DeviceType> deviceStateChangedListener) {
+	public final void addDeviceStateChangedListener(BT_DeviceListener deviceStateChangedListener) {
 		deviceStateChangedListeners = ArrayTools.appendElement(deviceStateChangedListeners, deviceStateChangedListener);
 	}
 
-	public final void removeDeviceStateChangedListener(BT_DeviceListener<DeviceType> deviceStateChangedListener) {
+	public final void removeDeviceStateChangedListener(BT_DeviceListener deviceStateChangedListener) {
 		deviceStateChangedListeners = ArrayTools.removeElement(deviceStateChangedListeners, deviceStateChangedListener);
 	}
 
-	public final DeviceType getDevice(String address) {
+	public final CyborgBT_Device getDevice(String address) {
 		return devicesFound.get(address);
 	}
 
-	public final DeviceType[] getAllDevices() {
+	public final CyborgBT_Device[] getAllDevices() {
 		return ArrayTools.asArray(devicesFound.values(), deviceType);
 	}
 
@@ -98,24 +95,23 @@ public abstract class BluetoothModel<DeviceType extends CyborgBT_Device<PacketTy
 	 * @param remoteDevice
 	 * @param newState
 	 */
-	public final void changeBT_DeviceState(DeviceType remoteDevice, BT_ConnectionState newState) {
+	public final void changeBT_DeviceState(CyborgBT_Device remoteDevice, BT_ConnectionState newState) {
 		BT_ConnectionState previousState = remoteDevice.getState();
 		if (!remoteDevice.setState(newState))
 			return;
 
-		for (BT_DeviceListener<DeviceType> listener : deviceStateChangedListeners)
+		for (BT_DeviceListener listener : deviceStateChangedListeners)
 			listener.onBT_DeviceStateChange(remoteDevice, previousState, newState);
 	}
 
 	@SuppressWarnings("unchecked")
-	final void onIncomingPacket(CyborgBT_Device<PacketType> cyborgBT_Device, PacketType packet) {
-		DeviceType device = (DeviceType) cyborgBT_Device;
-		for (OnIncomingPacketListener<DeviceType, PacketType> listener : packetListeners)
-			listener.onIncomingPacket(device, packet);
+	final void onIncomingPacket(CyborgBT_Device cyborgBT_Device, Packet packet) {
+		for (OnIncomingPacketListener listener : packetListeners)
+			listener.onIncomingPacket(cyborgBT_Device, packet);
 	}
 
 	final void changeBT_DeviceState(BluetoothDevice device, BT_ConnectionState newState) {
-		DeviceType remoteDevice = devicesFound.get(device.getAddress());
+		CyborgBT_Device remoteDevice = devicesFound.get(device.getAddress());
 		if (remoteDevice == null)
 			return;
 		changeBT_DeviceState(remoteDevice, newState);
@@ -127,24 +123,17 @@ public abstract class BluetoothModel<DeviceType extends CyborgBT_Device<PacketTy
 			return;
 		}
 
-		DeviceType remoteDevice;
-		try {
-			remoteDevice = deviceType.newInstance();
-		} catch (Exception e) {
-			throw new ClassInstantiationRuntimeException(deviceType, e);
-		}
-
+		CyborgBT_Device remoteDevice = createNewDevice(androidBT_Device);
 		remoteDevice.setBluetoothDevice(androidBT_Device);
 		remoteDevice.setModel(this);
 		devicesFound.put(androidBT_Device.getAddress(), remoteDevice);
-		setupNewRemoteBT_Device(remoteDevice);
-		logDebug("Remote Bluetooth device instance created: '" + deviceType.getSimpleName() + "'==" + remoteDevice + "");
+		logDebug("Remote Bluetooth device instance created: '" + remoteDevice.getClass().getSimpleName() + "'==" + remoteDevice + "");
 
-		for (BT_DeviceListener<DeviceType> listener : deviceStateChangedListeners)
+		for (BT_DeviceListener listener : deviceStateChangedListeners)
 			listener.onNewBT_DeviceDetected(remoteDevice);
 	}
 
-	protected abstract void setupNewRemoteBT_Device(DeviceType cyborgBT_Device);
+	protected abstract CyborgBT_Device createNewDevice(BluetoothDevice androidBT_device);
 
 	protected abstract boolean isValidDevice(BluetoothDevice androidBT_Device);
 

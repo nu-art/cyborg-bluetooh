@@ -44,6 +44,7 @@ import android.preference.PreferenceManager.OnActivityResultListener;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.bluetooth.constants.BT_AdapterState;
@@ -268,7 +269,7 @@ public final class BluetoothModule
 		btAdapter.cancelDiscovery();
 	}
 
-	public final void setModel(BluetoothModel<?, ?> model) {
+	public final void setModel(BluetoothModel model) {
 		this.model = model;
 		cyborg.setBeLogged(model);
 	}
@@ -294,11 +295,11 @@ public final class BluetoothModule
 	}
 
 	@SuppressWarnings("unchecked")
-	final <DeviceType extends CyborgBT_Device<?>> void deviceStateChange(BluetoothDevice device, BT_ConnectionState newState) {
-		DeviceType _device = (DeviceType) model.getDevice(device.getAddress());
+	final void deviceStateChange(BluetoothDevice device, BT_ConnectionState newState) {
+		CyborgBT_Device _device = model.getDevice(device.getAddress());
 		if (_device == null)
-			return;
-		((BluetoothModel<DeviceType, ?>) model).changeBT_DeviceState(_device, newState);
+			throw new BadImplementationException("BT device state changed before creating an instance of wrapper");
+		model.changeBT_DeviceState(_device, newState);
 	}
 
 	public BluetoothAdapter getBT_Adapter() {
@@ -330,7 +331,7 @@ public final class BluetoothModule
 
 		private final Handler handler;
 
-		private ArrayList<CyborgBT_Device<?>> inProgress = new ArrayList<>();
+		private ArrayList<CyborgBT_Device> inProgress = new ArrayList<>();
 
 		protected boolean stopConnecting = false;
 
@@ -343,11 +344,11 @@ public final class BluetoothModule
 			handler.removeCallbacks(null);
 		}
 
-		void connect(final CyborgBT_Device<?>... devices) {
+		void connect(final CyborgBT_Device... devices) {
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
-					for (CyborgBT_Device<?> remoteDevice : devices) {
+					for (CyborgBT_Device remoteDevice : devices) {
 						if (inProgress.contains(remoteDevice) || remoteDevice.isConnected()) {
 							logDebug("Will not connect to device... already in connecting");
 							continue;
@@ -369,8 +370,8 @@ public final class BluetoothModule
 			});
 		}
 
-		void disconnect(final CyborgBT_Device<?>... devices) {
-			for (final CyborgBT_Device<?> remoteDevice : devices) {
+		void disconnect(final CyborgBT_Device... devices) {
+			for (final CyborgBT_Device remoteDevice : devices) {
 				if (inProgress.contains(remoteDevice))
 					continue;
 
@@ -395,7 +396,7 @@ public final class BluetoothModule
 		}
 	}
 
-	private void connectToRemoteDevice(CyborgBT_Device<?> remoteDevice) {
+	private void connectToRemoteDevice(CyborgBT_Device remoteDevice) {
 		try {
 			deviceStateChange(remoteDevice.getBluetoothDevice(), BT_ConnectionState.ACL_Connecting);
 			BluetoothConnectivityMethod connectedMethod = remoteDevice.connectToDevice(phoneConnectivityMethod.get());

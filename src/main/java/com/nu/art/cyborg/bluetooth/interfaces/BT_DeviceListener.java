@@ -33,15 +33,12 @@
  */
 package com.nu.art.cyborg.bluetooth.interfaces;
 
-
 import com.nu.art.cyborg.bluetooth.constants.BT_ConnectionState;
 import com.nu.art.cyborg.bluetooth.core.CyborgBT_Device;
 
+public interface BT_DeviceListener {
 
-public interface BT_DeviceListener<DeviceType extends CyborgBT_Device<?>> {
+	void onNewBT_DeviceDetected(CyborgBT_Device device);
 
-	public void onNewBT_DeviceDetected(DeviceType device);
-
-	public void onBT_DeviceStateChange(DeviceType device, BT_ConnectionState previousState, BT_ConnectionState newState);
-
+	void onBT_DeviceStateChange(CyborgBT_Device device, BT_ConnectionState previousState, BT_ConnectionState newState);
 }

@@ -33,12 +33,10 @@
  */
 package com.nu.art.cyborg.bluetooth.interfaces;
 
-
-import com.nu.art.cyborg.bluetooth.core.BluetoothPacket;
 import com.nu.art.cyborg.bluetooth.core.CyborgBT_Device;
+import com.nu.art.cyborg.bluetooth.core.Packet;
 
+public interface OnIncomingPacketListener {
 
-public interface OnIncomingPacketListener<DeviceType extends CyborgBT_Device<PacketType>, PacketType extends BluetoothPacket> {
-
-	void onIncomingPacket(DeviceType remoteDevice, PacketType data);
+	void onIncomingPacket(CyborgBT_Device remoteDevice, Packet data);
 }

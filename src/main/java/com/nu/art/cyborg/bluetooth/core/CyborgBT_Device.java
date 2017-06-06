@@ -33,12 +33,6 @@
  */
 package com.nu.art.cyborg.bluetooth.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.UUID;
-
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
@@ -48,14 +42,20 @@ import com.nu.art.cyborg.bluetooth.constants.BT_ConnectionState;
 import com.nu.art.cyborg.bluetooth.core.BluetoothModule.BluetoothConnectivityMethod;
 import com.nu.art.cyborg.bluetooth.exceptions.BluetoothConnectionException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.UUID;
+
 import static com.nu.art.cyborg.bluetooth.core.BluetoothModule.BluetoothConnectivityMethod.Reflection;
 import static com.nu.art.cyborg.bluetooth.core.BluetoothModule.BluetoothConnectivityMethod.Standard;
 import static com.nu.art.cyborg.bluetooth.core.BluetoothModule.BluetoothConnectivityMethod.TBD;
 
-public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
+public abstract class CyborgBT_Device
 		extends Logger {
 
-	protected final class PacketReceiver
+	private final class PacketReceiver
 			implements Runnable {
 
 		private boolean stop;
@@ -72,7 +72,7 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 				neverUsed = true;
 				inputStream = socket.getInputStream();
 				while (!stop) {
-					PacketType packet = extractPacket(inputStream);
+					Packet packet = extractPacket(inputStream);
 					lastPacket = packet;
 					logDebug("New Packet received from Remote BT Device: " + CyborgBT_Device.this + "\n  Data: " + packet.toString());
 					synchronized (this) {
@@ -91,7 +91,6 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 					logError("----- BLUETOOTH PACKET READING IO ERROR -----\n BT Device: " + CyborgBT_Device.this, e);
 					logError("----- Remote peer Lost... \n");
 				}
-				return;
 			} catch (RuntimeException e) {
 				logError("----- BLUETOOTH LISTENER ERROR -----\n BT Device: " + CyborgBT_Device.this, e);
 				throw e;
@@ -104,17 +103,13 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 
 	private BluetoothDevice bluetoothDevice;
 
-	private String name;
-
-	private String address;
-
 	private BluetoothSocket socket;
 
 	private Thread socketListeningThread;
 
 	protected Throwable lastException;
 
-	private PacketType lastPacket;
+	private Packet lastPacket;
 
 	private final PacketReceiver socketListener = new PacketReceiver();
 
@@ -122,26 +117,24 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 
 	private volatile boolean connecting;
 
-	private BluetoothModel<?, PacketType> model;
+	private BluetoothModel model;
 
 	private String uuid;
 
-	final void setModel(BluetoothModel<?, PacketType> model) {
+	final void setModel(BluetoothModel model) {
 		this.model = model;
-	}
-
-	public final BluetoothDevice getBluetoothDevice() {
-		return bluetoothDevice;
 	}
 
 	final void setBluetoothDevice(BluetoothDevice bluetoothDevice) {
 		this.bluetoothDevice = bluetoothDevice;
-		this.name = bluetoothDevice.getName();
-		setTag(name);
-		this.address = bluetoothDevice.getAddress();
+		setTag(bluetoothDevice.getName());
 	}
 
-	public final synchronized BluetoothConnectivityMethod connectToDevice(BluetoothConnectivityMethod connectingMethod)
+	protected final BluetoothDevice getBluetoothDevice() {
+		return bluetoothDevice;
+	}
+
+	final synchronized BluetoothConnectivityMethod connectToDevice(BluetoothConnectivityMethod connectingMethod)
 			throws BluetoothConnectionException {
 		if (socket != null)
 			throw new BadImplementationException("Error socket is not null!!");
@@ -187,16 +180,20 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 		}
 	}
 
-	protected void onConnectionEstablished() {
-		logInfo("+---+ Connection established");
-	}
-
-	private synchronized void listenForIncomingSPP_Packets() {
-		if (socketListeningThread != null)
-			throw new BadImplementationException("Already lisening on Socket for BT Device" + this);
-		logInfo("+---+ Listening for incoming packets");
-		socketListeningThread = new Thread(socketListener, "Packet Listener - " + bluetoothDevice.getName());
-		socketListeningThread.start();
+	private void connectToSocket(BluetoothSocket socket)
+			throws BluetoothConnectionException {
+		try {
+			logInfo("+---+ Connecting to socket...");
+			socket.connect();
+			logInfo("+---+ Connected to socket");
+		} catch (IOException e) {
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				logError("Error while closing socket", e1);
+			}
+			throw new BluetoothConnectionException("Error connecting to socket with Device" + this, e);
+		}
 	}
 
 	private BluetoothSocket fetchBT_Socket_Normal()
@@ -221,36 +218,64 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 		}
 	}
 
-	private void connectToSocket(BluetoothSocket socket)
-			throws BluetoothConnectionException {
-		try {
-			logInfo("+---+ Connecting to socket...");
-			socket.connect();
-			logInfo("+---+ Connected to socket");
-		} catch (IOException e) {
-			try {
-				socket.close();
-			} catch (IOException e1) {
-				logError("Error while closing socket", e1);
-			} finally {
-				socket = null;
-			}
-			throw new BluetoothConnectionException("Error connecting to socket with Device" + this, e);
-		}
+	private void onConnectionEstablished() {
+		logInfo("+---+ Connection established");
 	}
 
-	protected void sendSPP_Packet(PacketType packet)
+	protected final synchronized void disconnect(IOException injectedCloseException)
+			throws IOException {
+		socketListener.injectedCloseException = injectedCloseException;
+		disconnect();
+	}
+
+	final synchronized void disconnect()
+			throws IOException {
+		if (socket == null || connecting)
+			return;
+		model.changeBT_DeviceState(bluetoothDevice, BT_ConnectionState.ACL_Disconnecting);
+
+		logInfo("+---+ Disconnecting...");
+		connecting = true;
+		socketListener.stop = true;
+		socket.close();
+	}
+
+	private void cleanup() {
+		lastPacket = null;
+		socketListeningThread = null;
+		socket = null;
+		onDisconnectionCompleted();
+		connecting = false;
+		model.changeBT_DeviceState(bluetoothDevice, BT_ConnectionState.ACL_Disconnected);
+		logInfo("+---+ Disconnection completed");
+	}
+
+	protected void onDisconnectionCompleted() {}
+
+	private synchronized void listenForIncomingSPP_Packets() {
+		if (socketListeningThread != null)
+			throw new BadImplementationException("Already listening on Socket for BT Device" + this);
+		logInfo("+---+ Listening for incoming packets");
+		socketListeningThread = new Thread(socketListener, "Packet Listener - " + bluetoothDevice.getName());
+		socketListeningThread.start();
+	}
+
+	protected void sendSPP_Packet(Packet packet)
 			throws IOException {
 		if (socket == null) {
 			throw new IOException("Cannot send spp packet, No ACL Connection to BT Device: " + this);
 		}
+
 		if (state != BT_ConnectionState.SPP_Connected) {
 			throw new IOException("Cannot send spp packet, No SPP Connection to BT Device: " + this);
 		}
+
 		OutputStream os = socket.getOutputStream();
-		packet.writePacketData(os);
-		os.flush();
+		serializePacket(os, packet);
 	}
+
+	protected abstract void serializePacket(OutputStream os, Packet packet)
+			throws IOException;
 
 	public final boolean isConnecting() {
 		return connecting;
@@ -264,50 +289,20 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 		return socket != null;
 	}
 
-	protected final synchronized void disconnect(IOException injectedCloseException)
-			throws IOException {
-		socketListener.injectedCloseException = injectedCloseException;
-		disconnect();
-	}
-
-	public final synchronized void disconnect()
-			throws IOException {
-		if (socket == null || connecting)
-			return;
-		model.changeBT_DeviceState(bluetoothDevice, BT_ConnectionState.ACL_Disconnecting);
-
-		logInfo("+---+ Disconnecting...");
-		connecting = true;
-		socketListener.stop = true;
-		socket.close();
-	}
-
-	private final void cleanup() {
-		lastPacket = null;
-		socketListeningThread = null;
-		socket = null;
-		onDisconnectionCompleted();
-		connecting = false;
-		model.changeBT_DeviceState(bluetoothDevice, BT_ConnectionState.ACL_Disconnected);
-		logInfo("+---+ Disconnection completed");
-	}
-
-	protected void onDisconnectionCompleted() {}
-
 	public final String getUuid() {
 		return uuid;
 	}
 
-	protected final void setUuid(String uuid) {
+	public final void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
 
 	public final String getName() {
-		return name;
+		return bluetoothDevice.getName();
 	}
 
 	public final String getAddress() {
-		return address;
+		return bluetoothDevice.getAddress();
 	}
 
 	final boolean setState(BT_ConnectionState newState) {
@@ -327,7 +322,7 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 		lastException = e;
 	}
 
-	public final PacketType getLastPacket() {
+	public final Packet getLastPacket() {
 		return lastPacket;
 	}
 
@@ -335,13 +330,13 @@ public abstract class CyborgBT_Device<PacketType extends BluetoothPacket>
 		return state;
 	}
 
-	public abstract PacketType extractPacket(InputStream inputStream)
+	public abstract Packet extractPacket(InputStream inputStream)
 			throws IOException;
 
 	@Override
 	public String toString() {
 		String toRet = "";
-		toRet += name + "@[" + address + "]:<" + state.getLabel() + ">";
+		toRet += getName() + "@[" + getAddress() + "]:<" + state.getLabel() + ">";
 		return toRet;
 	}
 }
