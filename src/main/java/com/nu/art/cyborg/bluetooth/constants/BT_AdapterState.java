@@ -37,15 +37,16 @@ import android.bluetooth.BluetoothAdapter;
 
 public enum BT_AdapterState {
 	NotAvailable("Device does not support Bluetooth", 0),
-	TurningOff("Turning Bluetooth Off", BluetoothAdapter.STATE_TURNING_OFF),
 	Off("Bluetooth Off", BluetoothAdapter.STATE_OFF),
 	TurningOn("Turning Bluetooth On", BluetoothAdapter.STATE_TURNING_ON),
 	On("Bluetooth On", BluetoothAdapter.STATE_ON),
+	TurningOff("Turning Bluetooth Off", BluetoothAdapter.STATE_TURNING_OFF),
 	Inquiring("Inquiry Started", 101),
 	CancelInquiry("Inquiry Canceled", 103),
+	InquiringEnded("Inquiry Ended", 150),
 	Advertising("Advertising Started", BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE),
 	CancelAdvertising("Advertising Canceled", BluetoothAdapter.SCAN_MODE_NONE),
-	InquiringEnded("Inquiry Ended", 150),;
+	;
 
 	public static BT_AdapterState getInstanceForState(int newState) {
 		BT_AdapterState[] states = BT_AdapterState.values();

@@ -35,7 +35,6 @@ package com.nu.art.cyborg.bluetooth.core;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 
 import com.nu.art.cyborg.bluetooth.constants.BT_AdapterState;
@@ -81,11 +80,11 @@ public class BT_AdapterReceiver
 				module.setState(BT_AdapterState.Inquiring);
 				break;
 			case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-				module.setState(BT_AdapterState.InquiringEnded);
+				module.onInquiryEnded();
 				break;
 			case BluetoothDevice.ACTION_FOUND:
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				module.newBT_DeviceDetected(device);
+				module.newDeviceDetected(device);
 				break;
 			default:
 				logDebug("ACL State: " + action);
