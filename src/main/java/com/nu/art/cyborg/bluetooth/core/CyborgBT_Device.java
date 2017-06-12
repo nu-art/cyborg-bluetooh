@@ -61,6 +61,8 @@ public class CyborgBT_Device
 
 	public SocketWrapper connectImpl()
 			throws BluetoothConnectionException, IOException {
+		setOneShot();
+
 		logInfo("+---+ Connecting to device...");
 		//			connecting = true;
 		if (socket != null)

@@ -40,6 +40,12 @@ public abstract class BluetoothTransceiver
 				throws IOException {
 			socket.close();
 		}
+
+		@Override
+		public boolean isConnected()
+				throws IOException {
+			return socket.isConnected();
+		}
 	}
 
 	final String uuid;

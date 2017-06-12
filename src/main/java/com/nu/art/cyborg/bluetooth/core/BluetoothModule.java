@@ -55,6 +55,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.io.transceiver.ConnectionState;
 import com.nu.art.cyborg.io.transceiver.PacketSerializer;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.Off;
@@ -128,6 +129,27 @@ public final class BluetoothModule
 
 	private void setRealState() {
 		setState(btAdapter.isEnabled() ? On : BT_AdapterState.Off);
+	}
+
+	public final void forceDiscovery() {
+		Method method;
+		final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (!btAdapter.isEnabled())
+			return;
+
+		try {
+			method = btAdapter.getClass().getMethod("setScanMode", int.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		try {
+			method.invoke(btAdapter, 23);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	public final void turnBluetoothOn_Admin() {
@@ -241,6 +263,10 @@ public final class BluetoothModule
 
 	public final void startInquiry() {
 		inquiryLogic.startInquiry();
+	}
+
+	public final boolean isInquiryInProcess() {
+		return inquiryLogic.isInquiryInProcess();
 	}
 
 	final void onInquiryEnded() {
