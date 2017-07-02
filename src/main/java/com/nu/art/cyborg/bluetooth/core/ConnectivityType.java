@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public enum ConnectivityType {
-	Reflective {
+	ReflectiveSecure {
 		@Override
 		protected BluetoothSocket createSocket(CyborgBT_Device device)
 				throws BluetoothConnectionException {
@@ -16,6 +16,21 @@ public enum ConnectivityType {
 			try {
 				device.logInfo("+---+ Fetching BT RFcomm Socket workaround index " + 1 + "...");
 				m = device.getBluetoothDevice().getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+				return (BluetoothSocket) m.invoke(device.getBluetoothDevice(), 1);
+			} catch (Exception e) {
+				throw new BluetoothConnectionException("Error Fetching BT RFcomm Socket!", e);
+			}
+		}
+	},
+
+	ReflectiveInsecure {
+		@Override
+		protected BluetoothSocket createSocket(CyborgBT_Device device)
+				throws BluetoothConnectionException {
+			Method m;
+			try {
+				device.logInfo("+---+ Fetching BT insecure RFcomm Socket workaround index " + 1 + "...");
+				m = device.getBluetoothDevice().getClass().getMethod("createInsecureRfcommSocket", new Class[]{int.class});
 				return (BluetoothSocket) m.invoke(device.getBluetoothDevice(), 1);
 			} catch (Exception e) {
 				throw new BluetoothConnectionException("Error Fetching BT RFcomm Socket!", e);

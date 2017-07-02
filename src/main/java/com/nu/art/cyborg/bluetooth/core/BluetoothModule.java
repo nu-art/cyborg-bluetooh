@@ -307,6 +307,7 @@ public final class BluetoothModule
 			if (!isInquiryInProcess())
 				return;
 
+			logDebug("Stopping inquiry");
 			btAdapter.cancelDiscovery();
 		}
 
