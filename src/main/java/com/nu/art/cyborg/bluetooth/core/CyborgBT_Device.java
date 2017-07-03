@@ -77,11 +77,6 @@ public class CyborgBT_Device
 		}
 		socket.connect();
 		logInfo("+---+ Connected to socket");
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		return new BluetoothSocketWrapper(socket);
 	}
 
