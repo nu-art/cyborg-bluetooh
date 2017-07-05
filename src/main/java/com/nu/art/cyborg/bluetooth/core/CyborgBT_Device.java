@@ -51,6 +51,10 @@ public class CyborgBT_Device
 	private ConnectivityType type = ConnectivityType.Insecure;
 
 	public CyborgBT_Device(BluetoothDevice bluetoothDevice, String uuid, PacketSerializer packetSerializer) {
+		this(bluetoothDevice.getName(), bluetoothDevice, uuid, packetSerializer);
+	}
+
+	public CyborgBT_Device(String name, BluetoothDevice bluetoothDevice, String uuid, PacketSerializer packetSerializer) {
 		super(bluetoothDevice.getName(), uuid, packetSerializer);
 		this.bluetoothDevice = bluetoothDevice;
 	}
