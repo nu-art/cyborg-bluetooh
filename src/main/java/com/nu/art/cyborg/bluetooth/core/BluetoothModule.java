@@ -163,7 +163,7 @@ public final class BluetoothModule
 		}
 
 		btAdapter.enable();
-		setState(BT_AdapterState.TurningOn);
+		setState(BT_AdapterState.On);
 	}
 
 	public final void turnBluetoothOn() {
