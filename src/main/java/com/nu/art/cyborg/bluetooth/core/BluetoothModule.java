@@ -98,7 +98,12 @@ public final class BluetoothModule
 		inquiryLogic = new InquiryLogic();
 		macAddress = Secure.getString(getContentResolver(), "bluetooth_address");
 		registerReceiver(BT_AdapterReceiver.class);
-		setState(btAdapter.isEnabled() ? On : BT_AdapterState.Off);
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				setState(btAdapter.isEnabled() ? On : BT_AdapterState.Off);
+			}
+		});
 	}
 
 	public final void registerDevice(CyborgBT_Device device) {
@@ -323,7 +328,7 @@ public final class BluetoothModule
 
 	private void dispatchBluetoothAdapterStateChanged(final BT_AdapterState state) {
 
-		dispatchEvent("Bluetooth adapter state changed: " + state, BluetoothAdapterListener.class, new Processor<BluetoothAdapterListener>() {
+		dispatchGlobalEvent("Bluetooth adapter state changed: " + state, BluetoothAdapterListener.class, new Processor<BluetoothAdapterListener>() {
 			@Override
 			public void process(BluetoothAdapterListener listener) {
 				listener.onBluetoothAdapterStateChanged(state);
