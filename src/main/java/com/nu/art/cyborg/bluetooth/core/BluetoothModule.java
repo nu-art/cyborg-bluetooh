@@ -119,16 +119,21 @@ public final class BluetoothModule
 		logInfo("Bluetooth MAC: " + macAddress);
 	}
 
-	synchronized void setState(BT_AdapterState state) {
+	void setState(BT_AdapterState state) {
 		if (this.state == state)
 			return;
 
 		logDebug("Adapter sate changed: " + this.state + " ==> " + state);
+		if (this.state == null) {
+			this.state = state;
+			return;
+		}
+
 		this.state = state;
 		dispatchBluetoothAdapterStateChanged(this.state);
 	}
 
-	public synchronized final boolean isState(BT_AdapterState state) {
+	public final boolean isState(BT_AdapterState state) {
 		return this.state == state;
 	}
 
@@ -168,7 +173,7 @@ public final class BluetoothModule
 		}
 
 		btAdapter.enable();
-		setState(BT_AdapterState.On);
+		setState(BT_AdapterState.TurningOn);
 	}
 
 	public final void turnBluetoothOn() {
