@@ -30,7 +30,7 @@ public class BluetoothServerTransceiver
 		return new BluetoothSocketWrapper(serverSocket.accept(-1));
 	}
 
-	public void disconnect() {
+	public void disconnectImpl() {
 		super.disconnect();
 		try {
 			serverSocket.close();
