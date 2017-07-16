@@ -81,6 +81,14 @@ public final class BluetoothModule
 
 	private HashMap<String, CyborgBT_Device> registered = new HashMap<>();
 
+	private Runnable turnAdapterOff = new Runnable() {
+		@Override
+		public void run() {
+			logWarning("did not discover any device... could this be a bug??? restarting the BT Adapter");
+			turnBluetoothOff();
+		}
+	};
+
 	@Override
 	@SuppressLint("HardwareIds")
 	protected void init() {
@@ -232,6 +240,7 @@ public final class BluetoothModule
 	}
 
 	final void newDeviceDetected(final BluetoothDevice device) {
+		removeActionFromBackground(turnAdapterOff);
 		dispatchModuleEvent("New Bluetooth device found: " + device, BluetoothDeviceListener.class, new Processor<BluetoothDeviceListener>() {
 			@Override
 			public void process(BluetoothDeviceListener listener) {
@@ -299,13 +308,9 @@ public final class BluetoothModule
 				return false;
 			}
 
-			if (isInquiryInProcess()) {
-				logDebug("Will not start inquiry, already in progress");
-				return false;
-			}
-
 			logInfo("Starting inquiry");
 			btAdapter.startDiscovery();
+			postOnBackground(10000, turnAdapterOff);
 			return true;
 		}
 

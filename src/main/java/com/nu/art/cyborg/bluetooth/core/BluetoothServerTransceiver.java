@@ -32,7 +32,8 @@ public class BluetoothServerTransceiver
 
 	public void disconnectImpl() {
 		try {
-			serverSocket.close();
+			if (serverSocket != null)
+				serverSocket.close();
 		} catch (IOException e) {
 			notifyError(e);
 		}
