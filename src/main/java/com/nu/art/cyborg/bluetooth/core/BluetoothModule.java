@@ -67,7 +67,8 @@ import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.TurningOff;
 		permission.BLUETOOTH_ADMIN
 })
 public final class BluetoothModule
-		extends CyborgModule {
+		extends CyborgModule
+		implements OnActivityResultListener {
 
 	public static final int EnableBluetoothIntentActionCode = 10;
 
@@ -184,6 +185,23 @@ public final class BluetoothModule
 		setState(BT_AdapterState.TurningOn);
 	}
 
+	@Override
+	public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode != BluetoothModule.EnableBluetoothIntentActionCode)
+			return false;
+
+		if (resultCode != Activity.RESULT_OK) {
+			setRealState();
+		}
+
+		if (isState(BT_AdapterState.Off))
+			setState(Off);
+		else
+			setState(On);
+
+		return true;
+	}
+
 	public final void turnBluetoothOn() {
 		if (btAdapter.isEnabled()) {
 			logInfo("Bluetooth adapter is already ON");
@@ -201,25 +219,6 @@ public final class BluetoothModule
 
 				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				activity.startActivityForResult(enableBtIntent, EnableBluetoothIntentActionCode);
-				activity.addResultListener(new OnActivityResultListener() {
-
-					@Override
-					public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-						if (requestCode != BluetoothModule.EnableBluetoothIntentActionCode)
-							return false;
-
-						if (resultCode != Activity.RESULT_OK) {
-							setRealState();
-						}
-
-						if (isState(BT_AdapterState.Off))
-							setState(Off);
-						else
-							setState(On);
-
-						return true;
-					}
-				});
 
 				btAdapter.enable();
 				setState(BT_AdapterState.TurningOn);
