@@ -181,7 +181,15 @@ public final class BluetoothModule
 			return;
 		}
 
-		btAdapter.enable();
+		try {
+			btAdapter.enable();
+		} catch (Exception e) {
+			// HACK: Android in some cases crashes here... we'd set the adapter state to off and dispatch the state
+			setState(BT_AdapterState.Off);
+			dispatchBluetoothAdapterStateChanged(this.state);
+			return;
+		}
+
 		setState(BT_AdapterState.TurningOn);
 	}
 
