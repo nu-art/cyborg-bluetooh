@@ -1,5 +1,6 @@
 /*
- * cyborg-core is an extendable  module based framework for Android.
+ * The cyborg-bluetooth module, meant to simplify your life when
+ * dealing with connecting to remote Android devices, and stream data...
  *
  * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
  *

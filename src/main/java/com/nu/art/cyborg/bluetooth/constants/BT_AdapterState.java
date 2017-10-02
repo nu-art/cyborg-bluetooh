@@ -1,35 +1,20 @@
 /*
- * Copyright 2008-2013, 'Nu-Art Software' AND/OR 'Adam Zehavi AKA TacB0sS'
+ * The cyborg-bluetooth module, meant to simplify your life when
+ * dealing with connecting to remote Android devices, and stream data...
  *
- * -------------------  !!! THIS FILE IS NOT FOR PUBLIC EYES !!!  -------------------
+ * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
  *
- * If you have obtained a source file with this header without proper authorization,
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * please take the time and report this to: <Support@Nu-Art-Software.com>
- * ----------------------------------------------------------------------------------
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * IF THIS HEADER IS ATTACHED TO ANY SOURCE/RESOURCE FILE, YOU ARE HERE BY INFORMED
- * THAT THE CONTENT OF THIS FILE IS A PROPERTY OF 'Nu-Art Software' AND/OR 'Adam Zehavi AKA TacB0sS.
- * VIEWING THIS CONTENT IS A VIOLATION OF OUR INTELECTUAL PROPERTIES AND/OR PRIVACY
- * UNLESS GIVEN A SPECIFIC WRITTEN AUTHORIZATION, AND/OR YOU HAVE SIGNED
- * 'Nu-Art Software' CYBORG FRAMEWORK NDA.
- * ----------------------------------------------------------------------------------
- *
- * If the above was not clear enough...
- * Without proper authorization, you are not allowed to do anything with this code...
- *
- * Do NOT:
- * VIEW IT !!			AND/OR
- * COPY IT !!			AND/OR
- * USE IT !!			AND/OR
- * DISTRIBUTE IT !!		AND/OR
- * CHANGE IT !!			AND/OR
- * AND/OR DO ANY OTHER THING WITH IT!!!
- *
- * [I'M SURE YOU GET THE PICTURE]
- * ----------------------------------------------------------------------------------
- *
- * Last Builder: TacB0sS
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.nu.art.cyborg.bluetooth.constants;
 
