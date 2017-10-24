@@ -28,6 +28,6 @@ if (project.hasProperty("configureUploadAndroidLibArtifact")) {
 }
 
 dependencies {
-    compile(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${DEFAULT_DEPENDENCY_VERSION}"))
+    compile(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${NU_ART_VERSION}"))
 }
 
