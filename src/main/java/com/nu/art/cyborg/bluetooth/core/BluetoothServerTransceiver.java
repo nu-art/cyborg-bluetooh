@@ -57,4 +57,9 @@ public class BluetoothServerTransceiver
 			notifyError(e);
 		}
 	}
+
+	@Override
+	protected String extraLog() {
+		return "UUID: " + uuid;
+	}
 }

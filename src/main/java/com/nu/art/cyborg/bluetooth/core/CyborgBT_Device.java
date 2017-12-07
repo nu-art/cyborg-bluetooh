@@ -79,6 +79,11 @@ public class CyborgBT_Device
 		return toRet;
 	}
 
+	@Override
+	protected String extraLog() {
+		return "@[" + getAddress() + "]:<" + getState().name() + ">";
+	}
+
 	public void setSocketType(ConnectivityType type) {
 		this.type = type;
 	}
