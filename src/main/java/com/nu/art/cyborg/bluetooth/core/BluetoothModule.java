@@ -276,10 +276,6 @@ public final class BluetoothModule
 		inquiryLogic.startInquiry();
 	}
 
-	public final boolean isInquiryInProcess() {
-		return inquiryLogic.isInquiryInProcess();
-	}
-
 	final void onInquiryEnded() {
 		inquiryLogic.onInquiryEnded();
 	}
@@ -294,6 +290,12 @@ public final class BluetoothModule
 
 	private class InquiryLogic {
 
+		boolean discovering = false;
+
+		InquiryLogic() {
+			discovering = isInquiryInProcess();
+		}
+
 		final boolean startInquiry() {
 			if (!btAdapter.isEnabled()) {
 				logDebug("Will not start inquiry, adapter is disabled");
@@ -302,7 +304,7 @@ public final class BluetoothModule
 
 			logInfo("Starting inquiry");
 			btAdapter.startDiscovery();
-			postOnBackground(10000, turnAdapterOff);
+			postOnBackground(20000, turnAdapterOff);
 			return true;
 		}
 
@@ -311,11 +313,12 @@ public final class BluetoothModule
 		}
 
 		final void stopInquiry() {
-			if (!isInquiryInProcess())
+			if (!discovering)
 				return;
 
 			logDebug("Stopping inquiry");
 			btAdapter.cancelDiscovery();
+			discovering = isInquiryInProcess();
 		}
 
 		final void onInquiryEnded() {
