@@ -22,15 +22,14 @@ import com.nu.art.core.exceptions.InternalException;
 
 public class BluetoothException
 		extends InternalException {
-	
+
 	private static final long serialVersionUID = 512244691857047417L;
-	
+
 	public BluetoothException(String reason, Throwable e) {
 		super(reason, e);
 	}
-	
+
 	public BluetoothException(String reason) {
 		super(reason);
 	}
-	
 }

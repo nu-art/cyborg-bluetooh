@@ -73,5 +73,4 @@ public abstract class BluetoothTransceiver
 		super(name, packetSerializer);
 		this.uuid = uuid;
 	}
-
 }

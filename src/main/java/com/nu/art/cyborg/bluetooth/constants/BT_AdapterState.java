@@ -30,8 +30,7 @@ public enum BT_AdapterState {
 	CancelInquiry("Inquiry Canceled", 103),
 	InquiringEnded("Inquiry Ended", 150),
 	Advertising("Advertising Started", BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE),
-	CancelAdvertising("Advertising Canceled", BluetoothAdapter.SCAN_MODE_NONE),
-	;
+	CancelAdvertising("Advertising Canceled", BluetoothAdapter.SCAN_MODE_NONE),;
 
 	public static BT_AdapterState getInstanceForState(int newState) {
 		BT_AdapterState[] states = BT_AdapterState.values();

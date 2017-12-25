@@ -233,7 +233,7 @@ public final class BluetoothModule
 
 	final void newDeviceDetected(final BluetoothDevice device) {
 		removeActionFromBackground(turnAdapterOff);
-		dispatchModuleEvent("New Bluetooth device found: " + device, BluetoothDeviceListener.class, new Processor<BluetoothDeviceListener>() {
+		dispatchModuleEvent("New Bluetooth device found: " + device, new Processor<BluetoothDeviceListener>() {
 			@Override
 			public void process(BluetoothDeviceListener listener) {
 				listener.onNewDeviceDetected(device);
@@ -322,7 +322,7 @@ public final class BluetoothModule
 		}
 
 		final void onInquiryEnded() {
-			dispatchGlobalEvent("On inquiry ended", BluetoothInquiryListener.class, new Processor<BluetoothInquiryListener>() {
+			dispatchGlobalEvent("On inquiry ended", new Processor<BluetoothInquiryListener>() {
 				@Override
 				public void process(BluetoothInquiryListener listener) {
 					listener.onInquiryEnded();
@@ -333,7 +333,7 @@ public final class BluetoothModule
 
 	private void dispatchBluetoothAdapterStateChanged(final BT_AdapterState state) {
 
-		dispatchGlobalEvent("Bluetooth adapter state changed: " + state, BluetoothAdapterListener.class, new Processor<BluetoothAdapterListener>() {
+		dispatchGlobalEvent("Bluetooth adapter state changed: " + state, new Processor<BluetoothAdapterListener>() {
 			@Override
 			public void process(BluetoothAdapterListener listener) {
 				listener.onBluetoothAdapterStateChanged(state);

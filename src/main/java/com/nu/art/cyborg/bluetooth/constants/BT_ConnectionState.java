@@ -18,9 +18,7 @@
  */
 package com.nu.art.cyborg.bluetooth.constants;
 
-
 import android.bluetooth.BluetoothDevice;
-
 
 public enum BT_ConnectionState {
 	ACL_Connecting("ACL Connecting"),
@@ -29,30 +27,30 @@ public enum BT_ConnectionState {
 	SPP_Connected("", "SPP Connected"),
 	ACL_Disconnecting(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED, "ACL Disconnecting"),
 	ACL_Disconnected(BluetoothDevice.ACTION_ACL_DISCONNECTED, "ACL Disconnected");
-	
+
 	private static final String NoAndroidConstant = "No Android Action";
-	
+
 	private String label;
-	
+
 	private String action;
-	
+
 	BT_ConnectionState(String label) {
 		this(NoAndroidConstant, label);
 	}
-	
+
 	BT_ConnectionState(String action, String label) {
 		this.label = label;
 		this.action = action;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public String getAction() {
 		return action;
 	}
-	
+
 	public static BT_ConnectionState getStateByAction(String action) {
 		BT_ConnectionState[] states = values();
 		for (BT_ConnectionState state : states)
