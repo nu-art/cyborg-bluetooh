@@ -27,6 +27,6 @@ if (project.hasProperty("configureUploadAndroidLibArtifact")) {
 }
 
 dependencies {
-    _implementation(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${NU_ART_VERSION}"))
+    _api(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${NU_ART_VERSION}"))
 }
 
