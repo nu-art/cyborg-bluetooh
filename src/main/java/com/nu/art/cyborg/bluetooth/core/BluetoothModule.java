@@ -81,12 +81,13 @@ public final class BluetoothModule
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (btAdapter == null) {
 			toastDebug("Device does not support Bluetooth!");
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				logError(e);
-			}
-			throw new RuntimeException("Device does not support Bluetooth!");
+			return;
+//			try {
+			//				Thread.sleep(5000);
+			//			} catch (InterruptedException e) {
+			//				logError(e);
+			//			}
+			//			throw new RuntimeException("Device does not support Bluetooth!");
 		}
 
 		inquiryLogic = new InquiryLogic();
