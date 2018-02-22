@@ -22,7 +22,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.cyborg.bluetooth.exceptions.BluetoothConnectionException;
 import com.nu.art.cyborg.io.transceiver.PacketSerializer;
 import com.nu.art.cyborg.io.transceiver.SocketWrapper;
 
@@ -49,17 +48,21 @@ public class CyborgBT_Device
 	}
 
 	public SocketWrapper connectImpl()
-			throws BluetoothConnectionException, IOException {
+			throws IOException {
 		setOneShot();
 
 		logInfo("+---+ Connecting to device...");
-		//			connecting = true;
 		if (socket != null)
 			throw new BadImplementationException("Error socket is not null!!");
 
 		BluetoothSocket socket = type.createSocket(this);
 		logInfo("+---+ Connecting to socket...");
-		socket.connect();
+		try {
+			socket.connect();
+		} catch (IOException e) {
+			socket.close();
+			throw e;
+		}
 		logInfo("+---+ Connected to socket");
 		return new BluetoothSocketWrapper(socket);
 	}

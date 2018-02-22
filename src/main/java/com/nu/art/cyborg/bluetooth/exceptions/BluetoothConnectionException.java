@@ -18,10 +18,10 @@
  */
 package com.nu.art.cyborg.bluetooth.exceptions;
 
-import com.nu.art.core.exceptions.InternalException;
+import java.io.IOException;
 
 public class BluetoothConnectionException
-		extends InternalException {
+		extends IOException {
 
 	private static final long serialVersionUID = 6376220348785232747L;
 
