@@ -57,6 +57,7 @@ public class CyborgBT_Device
 
 		BluetoothSocket socket = type.createSocket(this);
 		logInfo("+---+ Connecting to socket...");
+
 		try {
 			socket.connect();
 		} catch (IOException e) {
