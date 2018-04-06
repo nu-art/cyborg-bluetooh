@@ -27,18 +27,18 @@ import com.nu.art.cyborg.bluetooth.constants.BT_ConnectionState;
 import com.nu.art.cyborg.core.CyborgReceiver;
 
 public class BT_AdapterReceiver
-		extends CyborgReceiver<BluetoothModule> {
+	extends CyborgReceiver<BluetoothModule> {
 
 	private static final String[] DefaultActions = new String[]{
-			BluetoothDevice.ACTION_FOUND,
-			BluetoothAdapter.ACTION_DISCOVERY_STARTED,
-			BluetoothAdapter.ACTION_SCAN_MODE_CHANGED,
-			BluetoothAdapter.ACTION_STATE_CHANGED,
-			BluetoothAdapter.ACTION_DISCOVERY_FINISHED,
-			BluetoothDevice.ACTION_ACL_CONNECTED,
-			BluetoothDevice.ACTION_ACL_DISCONNECTED,
-			BluetoothDevice.ACTION_BOND_STATE_CHANGED,
-			BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
+		BluetoothDevice.ACTION_FOUND,
+		BluetoothAdapter.ACTION_DISCOVERY_STARTED,
+		BluetoothAdapter.ACTION_SCAN_MODE_CHANGED,
+		BluetoothAdapter.ACTION_STATE_CHANGED,
+		BluetoothAdapter.ACTION_DISCOVERY_FINISHED,
+		BluetoothDevice.ACTION_ACL_CONNECTED,
+		BluetoothDevice.ACTION_ACL_DISCONNECTED,
+		BluetoothDevice.ACTION_BOND_STATE_CHANGED,
+		BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
 	};
 
 	public BT_AdapterReceiver() {

@@ -30,7 +30,7 @@ public enum ConnectivityType {
 	ReflectiveSecure {
 		@Override
 		protected BluetoothSocket createSocket(CyborgBT_Device device)
-				throws BluetoothConnectionException {
+			throws BluetoothConnectionException {
 			Method m;
 			try {
 				device.logInfo("+---+ Fetching BT RFcomm Socket workaround index " + 1 + "...");
@@ -45,7 +45,7 @@ public enum ConnectivityType {
 	ReflectiveInsecure {
 		@Override
 		protected BluetoothSocket createSocket(CyborgBT_Device device)
-				throws BluetoothConnectionException {
+			throws BluetoothConnectionException {
 			Method m;
 			try {
 				device.logInfo("+---+ Fetching BT insecure RFcomm Socket workaround index " + 1 + "...");
@@ -60,7 +60,7 @@ public enum ConnectivityType {
 	Secured {
 		@Override
 		protected BluetoothSocket createSocket(CyborgBT_Device device)
-				throws BluetoothConnectionException {
+			throws BluetoothConnectionException {
 			try {
 				device.logInfo("+---+ Fetching BT RFcomm Socket standard for UUID: " + device.uuid + "...");
 				return device.getBluetoothDevice().createRfcommSocketToServiceRecord(UUID.fromString(device.uuid));
@@ -73,7 +73,7 @@ public enum ConnectivityType {
 	Insecure {
 		@Override
 		protected BluetoothSocket createSocket(CyborgBT_Device device)
-				throws BluetoothConnectionException {
+			throws BluetoothConnectionException {
 			try {
 				device.logInfo("+---+ Fetching BT Insecure RFcomm Socket standard for UUID: " + device.uuid + "...");
 				return device.getBluetoothDevice().createInsecureRfcommSocketToServiceRecord(UUID.fromString(device.uuid));
@@ -84,5 +84,5 @@ public enum ConnectivityType {
 	};
 
 	protected abstract BluetoothSocket createSocket(CyborgBT_Device device)
-			throws BluetoothConnectionException;
+		throws BluetoothConnectionException;
 }

@@ -30,39 +30,39 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class BluetoothTransceiver
-		extends BaseTransceiver {
+	extends BaseTransceiver {
 
 	class BluetoothSocketWrapper
-			implements SocketWrapper {
+		implements SocketWrapper {
 
 		final BluetoothSocket socket;
 
 		BluetoothSocketWrapper(BluetoothSocket socket)
-				throws IOException {
+			throws IOException {
 			this.socket = socket;
 		}
 
 		@Override
 		public OutputStream getOutputStream()
-				throws IOException {
+			throws IOException {
 			return socket.getOutputStream();
 		}
 
 		@Override
 		public InputStream getInputStream()
-				throws IOException {
+			throws IOException {
 			return socket.getInputStream();
 		}
 
 		@Override
 		public void close()
-				throws IOException {
+			throws IOException {
 			socket.close();
 		}
 
 		@Override
 		public boolean isConnected()
-				throws IOException {
+			throws IOException {
 			return socket.isConnected();
 		}
 	}

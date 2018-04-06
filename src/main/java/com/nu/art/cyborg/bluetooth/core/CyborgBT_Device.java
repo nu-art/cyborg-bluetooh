@@ -28,7 +28,7 @@ import com.nu.art.cyborg.io.transceiver.SocketWrapper;
 import java.io.IOException;
 
 public class CyborgBT_Device
-		extends BluetoothTransceiver {
+	extends BluetoothTransceiver {
 
 	private final BluetoothDevice bluetoothDevice;
 
@@ -48,7 +48,7 @@ public class CyborgBT_Device
 	}
 
 	public SocketWrapper connectImpl()
-			throws IOException {
+		throws IOException {
 		setOneShot();
 
 		logInfo("+---+ Connecting to device...");

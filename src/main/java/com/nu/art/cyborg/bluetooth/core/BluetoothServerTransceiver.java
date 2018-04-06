@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class BluetoothServerTransceiver
-		extends BluetoothTransceiver {
+	extends BluetoothTransceiver {
 
 	private final String name;
 
@@ -44,7 +44,7 @@ public class BluetoothServerTransceiver
 	}
 
 	public final SocketWrapper connectImpl()
-			throws IOException {
+		throws IOException {
 		serverSocket = btAdapter.listenUsingInsecureRfcommWithServiceRecord(name, UUID.fromString(uuid));
 		return new BluetoothSocketWrapper(serverSocket.accept(-1));
 	}

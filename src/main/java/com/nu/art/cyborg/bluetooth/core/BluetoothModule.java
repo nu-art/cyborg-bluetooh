@@ -48,12 +48,12 @@ import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.On;
 import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.TurningOff;
 
 @ModuleDescriptor(usesPermissions = {
-		permission.BLUETOOTH,
-		permission.BLUETOOTH_ADMIN
+	permission.BLUETOOTH,
+	permission.BLUETOOTH_ADMIN
 })
 public final class BluetoothModule
-		extends CyborgModule
-		implements OnActivityResultListener {
+	extends CyborgModule
+	implements OnActivityResultListener {
 
 	public static final int EnableBluetoothIntentActionCode = 10;
 
