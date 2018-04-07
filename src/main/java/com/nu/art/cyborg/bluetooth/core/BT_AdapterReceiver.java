@@ -2,7 +2,7 @@
  * The cyborg-bluetooth module, meant to simplify your life when
  * dealing with connecting to remote Android devices, and stream data...
  *
- * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
+ * Copyright (C) 2018  Adam van der Kruk aka TacB0sS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
