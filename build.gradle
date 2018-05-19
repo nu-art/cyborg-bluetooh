@@ -16,17 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'com.android.library'
-
-android {
-    apply from: '../dev-tools/gradle/common-cyborg-lib.gradle'
-}
-
-if (project.hasProperty("addTask_DeployAndroidArtifactToCentral")) {
-    addTask_DeployAndroidArtifactToCentral("com.nu-art-software.cyborg", "nu-art")
-}
-
+applyAndroidLibrary("com.nu-art-software.cyborg", "nu-art")
 dependencies {
-    _api(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${NU_ART_VERSION}"))
+    api(resolveDependency('cyborg-core', 'com.nu-art-software.cyborg', "${NU_ART_VERSION}"))
 }
 
