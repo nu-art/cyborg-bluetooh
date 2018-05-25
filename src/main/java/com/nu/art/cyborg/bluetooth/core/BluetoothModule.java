@@ -167,6 +167,7 @@ public final class BluetoothModule
 			return;
 		}
 
+		logInfo("Turning bluetooth adapter ON... no ui needed");
 		try {
 			btAdapter.enable();
 		} catch (Exception e) {
