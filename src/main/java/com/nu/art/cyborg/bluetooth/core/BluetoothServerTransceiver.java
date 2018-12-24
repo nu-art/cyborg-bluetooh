@@ -22,8 +22,8 @@ package com.nu.art.cyborg.bluetooth.core;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 
-import com.nu.art.cyborg.io.transceiver.PacketSerializer;
-import com.nu.art.cyborg.io.transceiver.SocketWrapper;
+import com.nu.art.io.PacketSerializer;
+import com.nu.art.io.SocketWrapper;
 
 import java.io.IOException;
 import java.util.UUID;

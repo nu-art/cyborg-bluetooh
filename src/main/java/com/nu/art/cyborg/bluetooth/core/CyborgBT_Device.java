@@ -22,8 +22,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.cyborg.io.transceiver.PacketSerializer;
-import com.nu.art.cyborg.io.transceiver.SocketWrapper;
+import com.nu.art.io.PacketSerializer;
+import com.nu.art.io.SocketWrapper;
 
 import java.io.IOException;
 

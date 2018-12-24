@@ -37,8 +37,8 @@ import com.nu.art.cyborg.bluetooth.core.interfaces.BluetoothInquiryListener;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.io.transceiver.ConnectionState;
-import com.nu.art.cyborg.io.transceiver.PacketSerializer;
+import com.nu.art.io.ConnectionState;
+import com.nu.art.io.PacketSerializer;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
