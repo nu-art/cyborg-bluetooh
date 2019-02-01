@@ -47,6 +47,10 @@ import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.Off;
 import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.On;
 import static com.nu.art.cyborg.bluetooth.constants.BT_AdapterState.TurningOff;
 
+@SuppressWarnings( {
+	                   "WeakerAccess",
+	                   "unused"
+                   })
 @ModuleDescriptor(usesPermissions = {
 	permission.BLUETOOTH,
 	permission.BLUETOOTH_ADMIN
@@ -110,7 +114,7 @@ public final class BluetoothModule
 	}
 
 	@Override
-	protected void printModuleDetails() {
+	protected void printDetails() {
 		logInfo("Bluetooth MAC: " + macAddress);
 	}
 
@@ -136,6 +140,7 @@ public final class BluetoothModule
 		setState(btAdapter.isEnabled() ? On : BT_AdapterState.Off);
 	}
 
+	@SuppressWarnings("JavaReflectionMemberAccess")
 	public final void forceDiscovery() {
 		Method method;
 		final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -153,7 +158,6 @@ public final class BluetoothModule
 			method.invoke(btAdapter, 23);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 
@@ -292,7 +296,7 @@ public final class BluetoothModule
 
 	private class InquiryLogic {
 
-		boolean discovering = false;
+		boolean discovering;
 
 		InquiryLogic() {
 			discovering = isInquiryInProcess();
