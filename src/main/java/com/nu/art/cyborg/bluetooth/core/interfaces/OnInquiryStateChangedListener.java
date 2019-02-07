@@ -19,7 +19,7 @@
 
 package com.nu.art.cyborg.bluetooth.core.interfaces;
 
-public interface BluetoothAdapterListener {
+public interface OnInquiryStateChangedListener {
 
-	void onBluetoothAdapterStateChanged();
+	void onInquiryStateChanged();
 }

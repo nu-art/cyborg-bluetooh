@@ -20,27 +20,26 @@ package com.nu.art.cyborg.bluetooth.constants;
 
 import android.bluetooth.BluetoothAdapter;
 
-public enum BT_AdapterState {
-	NotAvailable("Device does not support Bluetooth", 0),
-	Off("Bluetooth Off", BluetoothAdapter.STATE_OFF),
-	TurningOn("Turning Bluetooth On", BluetoothAdapter.STATE_TURNING_ON),
-	On("Bluetooth On", BluetoothAdapter.STATE_ON),
-	TurningOff("Turning Bluetooth Off", BluetoothAdapter.STATE_TURNING_OFF),
+public enum BT_AdvertiseState {
+	Unknown("Unknown", -1),
+	Advertising("Advertising Started", BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE),
+	Connectable("Connectable", BluetoothAdapter.SCAN_MODE_CONNECTABLE),
+	CancelAdvertising("Advertising Canceled", BluetoothAdapter.SCAN_MODE_NONE),
 	;
 
-	public static BT_AdapterState getInstanceForState(int newState) {
-		BT_AdapterState[] states = BT_AdapterState.values();
-		for (BT_AdapterState btState : states)
+	public static BT_AdvertiseState getInstanceForState(int newState) {
+		BT_AdvertiseState[] states = BT_AdvertiseState.values();
+		for (BT_AdvertiseState btState : states)
 			if (btState.stateValue == newState)
 				return btState;
-		throw new EnumConstantNotPresentException(BT_AdapterState.class, "For state value=" + newState);
+		throw new EnumConstantNotPresentException(BT_AdvertiseState.class, "For state value=" + newState);
 	}
 
 	private final int stateValue;
 
 	private String stateLabel;
 
-	BT_AdapterState(String stateLabel, int stateValue) {
+	BT_AdvertiseState(String stateLabel, int stateValue) {
 		this.stateValue = stateValue;
 		this.stateLabel = stateLabel;
 	}

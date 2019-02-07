@@ -30,10 +30,13 @@ import android.provider.Settings.Secure;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.bluetooth.constants.BT_AdapterState;
+import com.nu.art.cyborg.bluetooth.constants.BT_AdvertiseState;
 import com.nu.art.cyborg.bluetooth.constants.BT_ConnectionState;
+import com.nu.art.cyborg.bluetooth.constants.BT_InquiringState;
 import com.nu.art.cyborg.bluetooth.core.interfaces.BluetoothAdapterListener;
 import com.nu.art.cyborg.bluetooth.core.interfaces.BluetoothDeviceListener;
-import com.nu.art.cyborg.bluetooth.core.interfaces.BluetoothInquiryListener;
+import com.nu.art.cyborg.bluetooth.core.interfaces.OnAdvertisingStateChangedListener;
+import com.nu.art.cyborg.bluetooth.core.interfaces.OnInquiryStateChangedListener;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgModule;
@@ -65,7 +68,9 @@ public final class BluetoothModule
 
 	private String macAddress;
 
-	private BT_AdapterState state = Off;
+	private BT_AdapterState adapterState = Off;
+	private BT_AdvertiseState advertiseState;
+	private BT_InquiringState inquiryState;
 
 	private InquiryLogic inquiryLogic;
 
@@ -100,7 +105,7 @@ public final class BluetoothModule
 		postOnUI(new Runnable() {
 			@Override
 			public void run() {
-				setState(btAdapter.isEnabled() ? On : BT_AdapterState.Off);
+				setRealState();
 			}
 		});
 	}
@@ -118,22 +123,71 @@ public final class BluetoothModule
 		logInfo("Bluetooth MAC: " + macAddress);
 	}
 
+	public final BT_AdapterState getAdapterState() {
+		return adapterState;
+	}
+
+	public BT_InquiringState getInquiryState() {
+		return inquiryState;
+	}
+
+	public BT_AdvertiseState getAdvertiseState() {
+		return advertiseState;
+	}
+
 	void setState(BT_AdapterState state) {
-		if (this.state == state)
+		if (this.adapterState == state)
 			return;
 
-		logDebug("Adapter sate changed: " + this.state + " ==> " + state);
-		if (this.state == null) {
-			this.state = state;
+		logDebug("Adapter sate changed: " + this.adapterState + " ==> " + state);
+		this.adapterState = state;
+		if (this.adapterState == null)
 			return;
-		}
 
-		this.state = state;
-		dispatchBluetoothAdapterStateChanged(this.state);
+		dispatchGlobalEvent("Bluetooth adapter adapterState changed: " + state, BluetoothAdapterListener.class, new Processor<BluetoothAdapterListener>() {
+			@Override
+			public void process(BluetoothAdapterListener listener) {
+				listener.onBluetoothAdapterStateChanged();
+			}
+		});
+	}
+
+	void setState(BT_InquiringState state) {
+		if (this.inquiryState == state)
+			return;
+
+		logDebug("Inquiring sate changed: " + this.inquiryState + " ==> " + state);
+		this.inquiryState = state;
+		if (this.inquiryState == null)
+			return;
+
+		dispatchGlobalEvent("Bluetooth Inquiring adapterState changed: " + state, OnInquiryStateChangedListener.class, new Processor<OnInquiryStateChangedListener>() {
+			@Override
+			public void process(OnInquiryStateChangedListener listener) {
+				listener.onInquiryStateChanged();
+			}
+		});
+	}
+
+	void setState(BT_AdvertiseState state) {
+		if (this.advertiseState == state)
+			return;
+
+		logDebug("Advertising sate changed: " + this.advertiseState + " ==> " + state);
+		this.advertiseState = state;
+		if (this.advertiseState == null)
+			return;
+
+		dispatchGlobalEvent("Bluetooth Advertising adapterState changed: " + state, OnAdvertisingStateChangedListener.class, new Processor<OnAdvertisingStateChangedListener>() {
+			@Override
+			public void process(OnAdvertisingStateChangedListener listener) {
+				listener.onAdvertisingStateChanged();
+			}
+		});
 	}
 
 	public final boolean isState(BT_AdapterState state) {
-		return this.state == state;
+		return BT_AdapterState.getInstanceForState(btAdapter.getState()) == state;
 	}
 
 	private void setRealState() {
@@ -175,9 +229,8 @@ public final class BluetoothModule
 		try {
 			btAdapter.enable();
 		} catch (Exception e) {
-			// HACK: Android in some cases crashes here... we'd set the adapter state to off and dispatch the state
+			// HACK: Android in some cases crashes here... we'd set the adapter adapterState to off and dispatch the adapterState
 			setState(BT_AdapterState.Off);
-			dispatchBluetoothAdapterStateChanged(this.state);
 			return;
 		}
 
@@ -282,10 +335,6 @@ public final class BluetoothModule
 		inquiryLogic.startInquiry();
 	}
 
-	final void onInquiryEnded() {
-		inquiryLogic.onInquiryEnded();
-	}
-
 	public BluetoothServerTransceiver listen(String name, String uuid, PacketSerializer packetSerializer) {
 		return new BluetoothServerTransceiver(btAdapter, name, uuid, packetSerializer);
 	}
@@ -324,26 +373,8 @@ public final class BluetoothModule
 
 			logDebug("Stopping inquiry");
 			btAdapter.cancelDiscovery();
+			setState(BT_InquiringState.CancelInquiry);
 			discovering = isInquiryInProcess();
 		}
-
-		final void onInquiryEnded() {
-			dispatchGlobalEvent("On inquiry ended", BluetoothInquiryListener.class, new Processor<BluetoothInquiryListener>() {
-				@Override
-				public void process(BluetoothInquiryListener listener) {
-					listener.onInquiryEnded();
-				}
-			});
-		}
-	}
-
-	private void dispatchBluetoothAdapterStateChanged(final BT_AdapterState state) {
-
-		dispatchGlobalEvent("Bluetooth adapter state changed: " + state, BluetoothAdapterListener.class, new Processor<BluetoothAdapterListener>() {
-			@Override
-			public void process(BluetoothAdapterListener listener) {
-				listener.onBluetoothAdapterStateChanged(state);
-			}
-		});
 	}
 }

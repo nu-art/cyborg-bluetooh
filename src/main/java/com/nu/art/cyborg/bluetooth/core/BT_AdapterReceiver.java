@@ -23,7 +23,9 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 
 import com.nu.art.cyborg.bluetooth.constants.BT_AdapterState;
+import com.nu.art.cyborg.bluetooth.constants.BT_AdvertiseState;
 import com.nu.art.cyborg.bluetooth.constants.BT_ConnectionState;
+import com.nu.art.cyborg.bluetooth.constants.BT_InquiringState;
 import com.nu.art.cyborg.core.CyborgReceiver;
 
 public class BT_AdapterReceiver
@@ -51,21 +53,19 @@ public class BT_AdapterReceiver
 		switch (action) {
 			case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
 				int newState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-				if (newState == -1)
-					return;
-
-				module.setState(BT_AdapterState.getInstanceForState(newState));
+				module.setState(BT_AdvertiseState.getInstanceForState(newState));
 				break;
 
 			case BluetoothAdapter.ACTION_STATE_CHANGED:
 				newState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
 				module.setState(BT_AdapterState.getInstanceForState(newState));
 				break;
+
 			case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-				module.setState(BT_AdapterState.Inquiring);
+				module.setState(BT_InquiringState.Inquiring);
 				break;
 			case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-				module.onInquiryEnded();
+				module.setState(BT_InquiringState.InquiringEnded);
 				break;
 			case BluetoothDevice.ACTION_FOUND:
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
