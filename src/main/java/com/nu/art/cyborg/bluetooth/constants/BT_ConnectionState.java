@@ -24,6 +24,7 @@ public enum BT_ConnectionState {
 	ACL_Connecting("ACL Connecting"),
 	ACL_Connected(BluetoothDevice.ACTION_ACL_CONNECTED, "ACL Connected"),
 	Bonding(BluetoothDevice.ACTION_BOND_STATE_CHANGED, "New Bonding State"),
+	PairingRequest("android.bluetooth.device.action.PAIRING_REQUEST", "Paring request"),
 	SPP_Connected("", "SPP Connected"),
 	ACL_Disconnecting(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED, "ACL Disconnecting"),
 	ACL_Disconnected(BluetoothDevice.ACTION_ACL_DISCONNECTED, "ACL Disconnected");

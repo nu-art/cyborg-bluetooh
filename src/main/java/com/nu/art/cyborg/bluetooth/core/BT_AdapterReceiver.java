@@ -40,6 +40,8 @@ public class BT_AdapterReceiver
 		BluetoothDevice.ACTION_ACL_CONNECTED,
 		BluetoothDevice.ACTION_ACL_DISCONNECTED,
 		BluetoothDevice.ACTION_BOND_STATE_CHANGED,
+		//BluetoothDevice.ACTION_PAIRING_REQUEST,
+		"android.bluetooth.device.action.PAIRING_REQUEST",
 		BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
 	};
 
@@ -71,6 +73,7 @@ public class BT_AdapterReceiver
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				module.newDeviceDetected(device);
 				break;
+
 			default:
 				logDebug("ACL State: " + action);
 				BT_ConnectionState connectionState = BT_ConnectionState.getStateByAction(action);
